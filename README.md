@@ -1,4 +1,4 @@
-# check-me
+# CheckME
 
 > Check your website
 
