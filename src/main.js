@@ -6,7 +6,8 @@ import router from './router';
 
 Vue.config.productionTip = false;
 
-Vue.prototype.googleApiKey = 'AIzaSyAPWjJTWXPDp03SJI22zWPWsW7WSExRM78';
+//Vue.prototype.googleApiKey = 'AIzaSyAPWjJTWXPDp03SJI22zWPWsW7WSExRM78';
+Vue.prototype.googleApiKey = 'AIzaSyCIAN2SQ6b0TAHRU3Zz_EDa_k4Y4moUAbI';
 
 /* eslint-disable no-new */
 new Vue({
