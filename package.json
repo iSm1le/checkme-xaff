@@ -1,6 +1,6 @@
 {
   "name": "check-me",
-  "version": "1.0.0",
+  "version": "0.0.1-rc",
   "description": "Check your website",
   "author": "Mikhail K. <ism1le@xaff.ru>",
   "private": true,
@@ -11,8 +11,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "bootstrap-vue": "^2.0.0-rc.11",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-resource": "^1.5.1",
+    "vue-router": "^3.0.1",
+    "vue-smooth-scroll": "^1.0.13"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -29,6 +32,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
     "eslint": "^4.15.0",
+    "eslint-config-alpha": "^2.0.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.7.1",
