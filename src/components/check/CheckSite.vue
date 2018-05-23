@@ -765,10 +765,10 @@ export default {
     async getSSLRating() {
       try {
         const sslReadyTimer = await setInterval(async () => {
-          const sslResp = await this.$http.get(`https://api.xaff.ru/api/ssltest?host=${this.host}&protocol=${this.protocol}`);
-          if (sslResp.body.status === 'READY') {
+          const sslResp = await this.$http.get(`https://api.xaff.ru/api/ssltest?host=${this.host}&protocol=${this.method}`);
+          if (sslResp.body.sslTestResponse.status === 'READY') {
             let sumRate = 0;
-            sslResp.body.endpoints.forEach(el => {
+            sslResp.body.sslTestResponse.endpoints.forEach(el => {
               switch (el.grade) {
               case 'A+':
                 sumRate += 20;
@@ -799,7 +799,7 @@ export default {
                 break;
               }
             });
-            this.sslRating = sumRate / sslResp.body.endpoints.length;
+            this.sslRating = sumRate / sslResp.body.sslTestResponse.endpoints.length;
             this.sslReady = true;
             clearInterval(sslReadyTimer);
           }
