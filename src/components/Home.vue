@@ -91,7 +91,9 @@ export default {
       }
       const time = Date.now();
       localStorage.setItem('lastUse', time + (5 * 60000));
-      this.$router.push(`/check/${this.host}?protocol=${this.protocol}`);
+      const a = document.createElement('a');
+      a.href = `${this.protocol}://${this.host}`;
+      this.$router.push(`/check/${a.hostname}?protocol=${this.protocol}`);
     }
   }
 };
