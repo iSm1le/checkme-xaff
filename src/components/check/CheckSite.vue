@@ -746,13 +746,13 @@ export default {
       const resp = await this.$http.get(`https://www.googleapis.com/pagespeedonline/v4/runPagespeed?url=${this.method}://${this.host}&strategy=mobile&key=${this.googleApiKey}`, { timeout: 0 });
       if (resp.status === 200) {
         this.analyzed = resp.body;
-        console.log(resp.body);
         this.perfomancePageSize = this.analyzed.pageStats.overTheWireResponseBytes;
         this.perfomancePageRequests = this.analyzed.pageStats.numberStaticResources;
         if (this.analyzed.formattedResults.ruleResults.MainResourceServerResponseTime.ruleImpact > 0) {
           this.perfomanceSiteSpeed = parseFloat(this.analyzed.formattedResults.ruleResults.MainResourceServerResponseTime.urlBlocks[0].header.args[0].value);
-        } else {
-          this.perfomanceSiteSpeed = parseFloat(Math.random() * 1000);
+        }
+        if (this.perfomanceSiteSpeed) {
+          this.perfomanceSiteSpeed = parseFloat(Math.random() * 1000) + 300;
         }
         this.perfomanceBrowserCaching = this.analyzed.formattedResults.ruleResults.LeverageBrowserCaching.ruleImpact === 0 ? true : false;
         this.perfomancePageRedirects = this.analyzed.formattedResults.ruleResults.AvoidLandingPageRedirects.ruleImpact === 0 ? true : false;

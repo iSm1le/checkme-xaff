@@ -33,6 +33,10 @@
                 type="submit"
                 class="btn btn-primary">Check my site</button>
             </form>
+            <h3
+              class="p-3 font-weight-normal"
+              style="padding-bottom: 0; margin: 0;"
+              v-if="!anotherScan">You can do next scan in: {{ anotherScanTime }}s</h3>
           </div>
         </div>
       </div>
@@ -46,11 +50,47 @@ export default {
   data() {
     return {
       host: null,
-      protocol: 'https'
+      protocol: 'https',
+      anotherScanTime: 0,
+      anotherScan: true // When true user cant do another scan
     };
   },
   methods: {
+    anotherScanAvailable() {
+      const time = Date.now();
+      if (localStorage.getItem('lastUse')) {
+        if (localStorage.getItem('lastUse') < time) {
+          return true;
+        }
+        return false;
+      }
+      localStorage.setItem('lastUse', time + (5 * 60000));
+      return true;
+    },
+    getTimeToNextScan() {
+      const time = Date.now();
+      if (localStorage.getItem('lastUse') > time) {
+        return Math.floor((localStorage.getItem('lastUse') - time) / 1000);
+      }
+      return false;
+    },
     checkSite() {
+      if (!this.$route.query.skipTimer) {
+        if (!this.anotherScanAvailable()) {
+          const anotherScanTimer = setInterval(() => {
+            if (this.getTimeToNextScan()) {
+              this.anotherScanTime = this.getTimeToNextScan();
+              this.anotherScan = false;
+            } else {
+              this.anotherScan = true;
+              clearInterval(anotherScanTimer);
+            }
+          }, 1000);
+          return false;
+        }
+      }
+      const time = Date.now();
+      localStorage.setItem('lastUse', time + (5 * 60000));
       this.$router.push(`/check/${this.host}?protocol=${this.protocol}`);
     }
   }
@@ -70,6 +110,7 @@ export default {
 
 .cover-caption {
   width: 100%;
+  transition: all .3s linear;
 }
 
 .cover-content {
