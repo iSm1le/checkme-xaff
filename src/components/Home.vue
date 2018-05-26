@@ -105,10 +105,13 @@ export default {
     },
     footerSwitch() {
       const footer = document.getElementById('footer');
-      if (footer.className !== 'container-fluid pt-4 bg-light') {
-        footer.className = 'container-fluid pt-4 bg-light';
+      if (footer) {
+        if (footer.className !== 'container-fluid pt-4 bg-light') {
+          footer.className = 'container-fluid pt-4 bg-light';
+        }
+        return true;
       }
-      return true;
+      return false;
     }
   },
   created() {

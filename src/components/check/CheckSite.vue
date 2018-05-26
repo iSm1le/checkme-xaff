@@ -58,10 +58,13 @@ export default {
     },
     footerSwitch() {
       const footer = document.getElementById('footer');
-      if (footer.className !== 'container-fluid pt-4 bg-light relative') {
-        footer.className = 'container-fluid pt-4 bg-light relative';
+      if (footer) {
+        if (footer.className !== 'container-fluid pt-4 bg-light relative') {
+          footer.className = 'container-fluid pt-4 bg-light relative';
+        }
+        return true;
       }
-      return true;
+      return false;
     }
   },
   created() {
