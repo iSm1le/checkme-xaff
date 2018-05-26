@@ -1,25 +1,26 @@
 <template>
   <div id="app">
     <router-view/>
-    <hr>
     <footer
       id="footer"
-      class="container-fluid py-2 bg-light absolute">
-      <div class="row">
-        <div class="col-6 col-md py-2">
-          <h5>About</h5>
-          <ul class="list-unstyled text-small">
-            <li><a
-              class="text-muted"
-              href="https://github.com/iSm1le">Developer</a></li>
-            <li><a
-              class="text-muted"
-              href="https://github.com/iSm1le/checkme-xaff/blob/production/LICENSE">License</a></li>
-          </ul>
-        </div>
-        <div class="col-6 text-right col-md">
-          <small class="d-block py-2 mb-2 text-muted">CheckME.XaFF &copy; 2018</small>
-          <small class="d-block text-muted"><b>Version: </b>{{ appVer }}</small>
+      class="container-fluid pt-4 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <h5>About</h5>
+            <ul class="list-unstyled text-small">
+              <li><a
+                class="text-muted"
+                href="https://github.com/iSm1le">Developer</a></li>
+              <li><a
+                class="text-muted"
+                href="https://github.com/iSm1le/checkme-xaff/blob/production/LICENSE">License</a></li>
+            </ul>
+          </div>
+          <div class="col-6 text-right pt-4">
+            <small class="d-block text-muted">CheckME.XaFF &copy; 2018</small>
+            <small class="d-block text-muted pt-2"><b>Version: </b>{{ appVer }}</small>
+          </div>
         </div>
       </div>
     </footer>
@@ -39,7 +40,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
 
 * {
@@ -50,8 +51,20 @@ html,
 body,
 #app {
   height: 100%;
+  background: #222 url('./assets/img/pattern.png') repeat;
 }
 img {
   max-width: 100%;
+}
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+
+  &.relative {
+    position: relative;
+    left: 0;
+    bottom: 0;
+  }
 }
 </style>

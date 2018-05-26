@@ -2,11 +2,11 @@
   <section class="cover">
     <div class="cover-caption">
       <div class="container-fluid text-center">
-        <div class="row justify-content-sm-center">
-          <div class="col-sm-auto cover-content">
+        <div class="d-flex flex-row justify-content-sm-center">
+          <div class="col-sm-auto cover-content p-4">
             <form
               class="form-inline"
-              @submit.prevent="checkSite()">
+              @submit.prevent="startScan()">
               <div class="form-group">
                 <select
                   name="siteProtocol"
@@ -52,6 +52,7 @@ export default {
       host: null,
       protocol: 'https',
       anotherScanTime: 0,
+      anotherScanTimer: null, // Scan timer
       anotherScan: true // When true user cant do another scan
     };
   },
@@ -62,9 +63,19 @@ export default {
         if (localStorage.getItem('lastUse') < time) {
           return true;
         }
+        if (!this.anotherScanTimer) {
+          this.anotherScanTimer = setInterval(() => {
+            if (this.getTimeToNextScan()) {
+              this.anotherScanTime = this.getTimeToNextScan();
+              this.anotherScan = false;
+            } else {
+              this.anotherScan = true;
+              clearInterval(this.anotherScanTimer);
+            }
+          }, 1000);
+        }
         return false;
       }
-      localStorage.setItem('lastUse', time + (5 * 60000));
       return true;
     },
     getTimeToNextScan() {
@@ -74,37 +85,43 @@ export default {
       }
       return false;
     },
-    checkSite() {
-      if (!this.$route.query.skipTimer) {
+    canIScan() {
+      if (!this.$route.query.dev) {
         if (!this.anotherScanAvailable()) {
-          const anotherScanTimer = setInterval(() => {
-            if (this.getTimeToNextScan()) {
-              this.anotherScanTime = this.getTimeToNextScan();
-              this.anotherScan = false;
-            } else {
-              this.anotherScan = true;
-              clearInterval(anotherScanTimer);
-            }
-          }, 1000);
           return false;
         }
       }
-      const time = Date.now();
-      localStorage.setItem('lastUse', time + (5 * 60000));
-      const a = document.createElement('a');
-      a.href = `${this.protocol}://${this.host}`;
-      this.$router.push(`/check/${a.hostname}?protocol=${this.protocol}`);
+      return true;
+    },
+    startScan() {
+      if (this.canIScan()) {
+        const time = Date.now();
+        localStorage.setItem('lastUse', time + (2 * 60000));
+        const a = document.createElement('a');
+        a.href = `${this.protocol}://${this.host}`;
+        this.$router.push(`/check/${a.hostname}?protocol=${this.protocol}`);
+      }
+      return false;
+    },
+    footerSwitch() {
+      const footer = document.getElementById('footer');
+      if (footer.className !== 'container-fluid pt-4 bg-light') {
+        footer.className = 'container-fluid pt-4 bg-light';
+      }
+      return true;
     }
+  },
+  created() {
+    this.canIScan();
+    this.footerSwitch();
   }
 };
 </script>
 
 <style scoped>
 .cover {
-  background: #222 url('../assets/img/cover.jpg') center center no-repeat;
-  background-size: cover;
   color: white;
-  height: 100%;
+  height: 90%;
   text-align: center;
   display: flex;
   align-items: center;
@@ -118,6 +135,5 @@ export default {
 .cover-content {
   background: rgba(0,0,0,0.8);
   color: white;
-  padding: 1.875rem;
 }
 </style>

@@ -5,6 +5,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.travis*
+*.old
+src/components/check/check-site/*.json
 
 # Editor directories and files
 .idea

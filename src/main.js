@@ -6,8 +6,6 @@ import router from './router';
 
 Vue.config.productionTip = false;
 
-Vue.prototype.googleApiKey = 'AIzaSyAPWjJTWXPDp03SJI22zWPWsW7WSExRM78';
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
