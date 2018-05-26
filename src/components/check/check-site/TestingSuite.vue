@@ -405,82 +405,86 @@ export default {
   },
   methods: {
     async testSite() {
-      const formData = new FormData();
-      formData.append('tested_url', `${this.protocol}://${this.host}`);
-      formData.append('dnsr', 'on');
-      formData.append('recheck', 'false');
-      formData.append('follow_redirects', 'true');
-      formData.append('verbosity', '1');
-      let r1 = await this.$http.post(`https://www.htbridge.com/websec/api/v1/chsec/${this.date}.html`, formData);
-      if (r1.status === 200) {
-        if (r1.body.multiple_ips) {
-          formData.append('choosen_ip', r1.body.multiple_ips[0]);
-          formData.append('token', r1.body.token);
-          r1 = await this.$http.post(`https://www.htbridge.com/websec/api/v1/chsec/${this.date}.html`, formData);
-        }
+      try {
+        const formData = new FormData();
+        formData.append('tested_url', `${this.protocol}://${this.host}`);
+        formData.append('dnsr', 'on');
+        formData.append('recheck', 'false');
+        formData.append('follow_redirects', 'true');
+        formData.append('verbosity', '1');
+        let r1 = await this.$http.post(`https://www.htbridge.com/websec/api/v1/chsec/${this.date}.html`, formData);
         if (r1.status === 200) {
-          const timer = await setInterval(async () => {
-            const jobId = new FormData();
-            jobId.append('job_id', r1.body.job_id);
-            const response = await this.$http.post(`https://www.htbridge.com/websec/api/v1/get_result/${this.date}.html`, jobId);
-            if (response.status === 200) {
-              if (response.body.status_id && response.body.status_id === 2) {
-                return false;
-              }
-              this.response = response.body;
-              clearInterval(timer);
+          if (r1.body.multiple_ips) {
+            formData.append('choosen_ip', r1.body.multiple_ips[0]);
+            formData.append('token', r1.body.token);
+            r1 = await this.$http.post(`https://www.htbridge.com/websec/api/v1/chsec/${this.date}.html`, formData);
+          }
+          if (r1.status === 200) {
+            const timer = await setInterval(async () => {
+              const jobId = new FormData();
+              jobId.append('job_id', r1.body.job_id);
+              const response = await this.$http.post(`https://www.htbridge.com/websec/api/v1/get_result/${this.date}.html`, jobId);
+              if (response.status === 200) {
+                if (response.body.status_id && response.body.status_id === 2) {
+                  return false;
+                }
+                this.response = response.body;
+                clearInterval(timer);
 
-              this.finalGrade = this.response.grade;
-              this.finalGradeColor = this.getColor(this.response.score);
-              this.serverInfo.serverIp = this.response.server_ip;
-              this.serverInfo.reverseDNS = this.response.reverse_dns;
-              const date = new Date(this.response.ts * 1000);
-              this.serverInfo.testDate = `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
-              this.serverInfo.serverLocation = `${this.response.internals.country}, ${this.response.internals.city}`;
-              this.highlights = this.response.global_highlights;
-              this.resolved.shortResult = true;
-              this.webServerSecurity.httpResponse = this.response.http_response;
-              this.webServerSecurity.redirect = this.response.redirect_to === '' ? 'N/A' : this.response.redirect_to;
-              this.webServerSecurity.npn = this.response.http_additional_info.protocol_negotiation.npn;
-              this.webServerSecurity.alpn = this.response.http_additional_info.protocol_negotiation.alpn ? 'Yes' : 'No';
-              this.webServerSecurity.contentEncoding = this.response.http_additional_info.content_encoding;
-              this.webServerSecurity.serverSignature = this.response.server_signature;
-              this.webServerSecurity.waf = this.response.http_additional_info.waf;
-              Object.keys(this.response.http_verbs).forEach((key, i) => {
-                this.webServerSecurity.httpMethods[i] = Object();
-                this.webServerSecurity.httpMethods[i] = {
-                  name: key,
-                  description: `${this.response.http_verbs[key].split('. [')[0]}.`,
-                  type: this.getType(this.response.http_verbs[key])
-                };
-              });
-              this.resolved.webServerSecurity = true;
-              this.httpHeadersSecurity = this.response.http_headers;
-              this.resolved.httpHeadersSecurity = true;
-              this.cookiesSecurity = this.response.http_cookies;
-              this.cookiesSecurity.forEach((el, i) => {
-                this.cookiesSecurityAttributes[i] = [];
-                Object.keys(el).forEach(key => {
-                  if (el[key].description && el[key].value) {
-                    const item = {
-                      name: key,
-                      description: `${el[key].description.split('. [')[0]}.`,
-                      type: this.getType(el[key].description),
-                      value: el[key].value === 'checkbox_TRUE' ? '✔' : el[key].value === 'checkbox_FALSE' ? '✘' : el[key].value
-                    };
-                    this.cookiesSecurityAttributes[i].push(item);
-                  }
+                this.finalGrade = this.response.grade;
+                this.finalGradeColor = this.getColor(this.response.score);
+                this.serverInfo.serverIp = this.response.server_ip;
+                this.serverInfo.reverseDNS = this.response.reverse_dns;
+                const date = new Date(this.response.ts * 1000);
+                this.serverInfo.testDate = `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
+                this.serverInfo.serverLocation = `${this.response.internals.country}, ${this.response.internals.city}`;
+                this.highlights = this.response.global_highlights;
+                this.resolved.shortResult = true;
+                this.webServerSecurity.httpResponse = this.response.http_response;
+                this.webServerSecurity.redirect = this.response.redirect_to === '' ? 'N/A' : this.response.redirect_to;
+                this.webServerSecurity.npn = this.response.http_additional_info.protocol_negotiation.npn;
+                this.webServerSecurity.alpn = this.response.http_additional_info.protocol_negotiation.alpn ? 'Yes' : 'No';
+                this.webServerSecurity.contentEncoding = this.response.http_additional_info.content_encoding;
+                this.webServerSecurity.serverSignature = this.response.server_signature;
+                this.webServerSecurity.waf = this.response.http_additional_info.waf;
+                Object.keys(this.response.http_verbs).forEach((key, i) => {
+                  this.webServerSecurity.httpMethods[i] = Object();
+                  this.webServerSecurity.httpMethods[i] = {
+                    name: key,
+                    description: `${this.response.http_verbs[key].split('. [')[0]}.`,
+                    type: this.getType(this.response.http_verbs[key])
+                  };
                 });
-              });
-              this.resolved.cookiesSecurity = true;
-              this.thirdPartyContent = this.response.third_party_content;
-              this.resolved.thirdPartyContent = true;
-              return true;
-            }
-          }, 10000);
+                this.resolved.webServerSecurity = true;
+                this.httpHeadersSecurity = this.response.http_headers;
+                this.resolved.httpHeadersSecurity = true;
+                this.cookiesSecurity = this.response.http_cookies;
+                this.cookiesSecurity.forEach((el, i) => {
+                  this.cookiesSecurityAttributes[i] = [];
+                  Object.keys(el).forEach(key => {
+                    if (el[key].description && el[key].value) {
+                      const item = {
+                        name: key,
+                        description: `${el[key].description.split('. [')[0]}.`,
+                        type: this.getType(el[key].description),
+                        value: el[key].value === 'checkbox_TRUE' ? '✔' : el[key].value === 'checkbox_FALSE' ? '✘' : el[key].value
+                      };
+                      this.cookiesSecurityAttributes[i].push(item);
+                    }
+                  });
+                });
+                this.resolved.cookiesSecurity = true;
+                this.thirdPartyContent = this.response.third_party_content;
+                this.resolved.thirdPartyContent = true;
+                return true;
+              }
+            }, 10000);
+          }
         }
+        return true;
+      } catch (e) {
+        return false;
       }
-      return true;
     },
     getType(string) {
       let result = null;
