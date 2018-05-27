@@ -447,11 +447,11 @@ export default {
                 this.resolved.shortResult = true;
                 this.webServerSecurity.httpResponse = this.response.http_response;
                 this.webServerSecurity.redirect = this.response.redirect_to === '' ? 'N/A' : this.response.redirect_to;
-                this.webServerSecurity.npn = this.response.http_additional_info.protocol_negotiation.npn ? 'Yes' : 'No';
+                this.webServerSecurity.npn = this.response.http_additional_info.protocol_negotiation.npn ? ['Yes'] : ['No'];
                 this.webServerSecurity.alpn = this.response.http_additional_info.protocol_negotiation.alpn ? 'Yes' : 'No';
                 this.webServerSecurity.contentEncoding = this.response.http_additional_info.content_encoding;
                 this.webServerSecurity.serverSignature = this.response.server_signature;
-                this.webServerSecurity.waf = this.response.http_additional_info.waf ? 'Yes' : 'No';
+                this.webServerSecurity.waf = this.response.http_additional_info.waf ? ['Yes'] : ['No'];
                 Object.keys(this.response.http_verbs).forEach((key, i) => {
                   this.webServerSecurity.httpMethods[i] = Object();
                   this.webServerSecurity.httpMethods[i] = {
