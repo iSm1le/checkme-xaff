@@ -68,7 +68,9 @@ export default {
     }
   },
   created() {
-    this.footerSwitch();
+    setTimeout(() => {
+      this.footerSwitch();
+    }, 250);
   }
 };
 </script>

@@ -206,13 +206,18 @@
                         <div class="col-sm-12">
                           <div class="highlights-container">
                             <h5 class="header text-info">{{ index }}</h5>
-                            <div :class="`highlight-${getType(item.highlight[0])} mb-1 pl-3 pr-2 py-2`">
+                            <div
+                              v-for="(highlight, key) in item.highlight"
+                              :key="key"
+                              v-if="highlight"
+                              :class="`highlight-${getType(highlight)} mb-1 pl-3 pr-2 py-2`">
                               <div
-                                :class="`bulb-${getType(item.highlight[0])} px-3 py-1 text-light font-weight-bold small float-right`"
-                                style="position: absolute; right: 2%; top: 52%; transfrom: translateY(-50%);">{{ getHighlightText(item.highlight[0]) }}</div>
+                                :class="`bulb-${getType(highlight)} px-3 py-1 text-light font-weight-bold small float-right`">{{ getHighlightText(highlight) }}
+                              </div>
                               <div
                                 class="font-weight-normal"
-                                style="width: 80%;">{{ item.highlight[0].split('. [')[0] }}.</div>
+                                style="width: 80%;">{{ highlight.split('. [')[0] }}.
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -367,7 +372,7 @@ export default {
   name: 'TestingSuite',
   data() {
     return {
-      // response: null,                   // Response from api with test results
+      response: null,                   // Response from api with test results
       finalGrade: 'C',                  // Final grade of test
       finalGradeColor: null,            // Color of bg of test grade (in bootstrap form)
       serverInfo: {
@@ -487,63 +492,95 @@ export default {
       }
     },
     getType(string) {
-      let result = null;
-      switch (string.split('. [')[1]) {
-      case '1]':
-        result = 'success';
-        break;
-      case '2]':
-        result = 'warning';
-        break;
-      case '3]':
-        result = 'warning';
-        break;
-      case '4]':
-        result = 'info';
-        break;
-      default:
-        result = 'danger';
-        break;
+      try {
+        let result = null;
+        if (string) {
+          switch (string.split('. [')[1]) {
+          case '1]':
+            result = 'success';
+            break;
+          case '2]':
+            result = 'warning';
+            break;
+          case '3]':
+            result = 'warning';
+            break;
+          case '4]':
+            result = 'info';
+            break;
+          default:
+            result = 'danger';
+            break;
+          }
+        } else {
+          result = 'danger';
+        }
+        return result;
+      } catch (e) {
+        return 'danger';
       }
-      return result;
     },
     getHighlightText(string) {
-      let result = null;
-      switch (string.split('. [')[1]) {
-      case '1]':
-        result = 'Good configuration';
-        break;
-      case '2]':
-        result = 'Misconfiguration or weakness';
-        break;
-      case '4]':
-        result = 'Information';
-        break;
-      default:
-        result = 'Misconfiguration or weakness';
-        break;
+      try {
+        let result = null;
+        if (string) {
+          switch (string.split('. [')[1]) {
+          case '1]':
+            result = 'Good configuration';
+            break;
+          case '2]':
+            result = 'Misconfiguration or weakness';
+            break;
+          case '4]':
+            result = 'Information';
+            break;
+          default:
+            result = 'Misconfiguration or weakness';
+            break;
+          }
+        } else {
+          result = 'Misconfiguration or weakness';
+        }
+        return result;
+      } catch (e) {
+        return false;
       }
-      return result;
     },
     getColor(number) {
-      let result = null;
-      if (number > 70) {
-        result = 'success';
-      } else if (number > 30) {
-        result = 'warning';
-      } else if (number <= 30) {
-        result = 'danger';
-      } else {
-        result = 'info';
+      try {
+        let result = null;
+        if (number) {
+          if (number > 70) {
+            result = 'success';
+          } else if (number > 30) {
+            result = 'warning';
+          } else if (number <= 30) {
+            result = 'danger';
+          } else {
+            result = 'info';
+          }
+        } else {
+          result = 'info';
+        }
+        return result;
+      } catch (e) {
+        return false;
       }
-      return result;
     },
     toggleSpoiler(spoiler) {
-      const el = spoiler.path[1];
-      if (el.className === 'card collapsed bg-light') {
-        el.className = 'card bg-light';
-      } else {
-        el.className = 'card collapsed bg-light';
+      try {
+        const el = spoiler.path[1];
+        if (el) {
+          if (el.className === 'card collapsed bg-light') {
+            el.className = 'card bg-light';
+          } else {
+            el.className = 'card collapsed bg-light';
+          }
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return false;
       }
     }
   },
