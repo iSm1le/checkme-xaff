@@ -116,7 +116,9 @@ export default {
   },
   created() {
     this.canIScan();
-    this.footerSwitch();
+    setTimeout(() => {
+      this.footerSwitch();
+    }, 250);
   }
 };
 </script>
