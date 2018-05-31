@@ -13,19 +13,19 @@
         <a
           class="py-2 d-none d-md-inline-block"
           href="#webServerSecurity"
-          v-smooth-scroll="{ duration: 1000, offset: 0 }">Web security</a>
+          v-smooth-scroll="{ duration: 1000, offset: -46 }">Web security</a>
         <a
           class="py-2 d-none d-md-inline-block"
           href="#httpHeadersSecurity"
-          v-smooth-scroll="{ duration: 1000, offset: 0 }">Headers security</a>
+          v-smooth-scroll="{ duration: 1000, offset: -46 }">Headers security</a>
         <a
           class="py-2 d-none d-md-inline-block"
           href="#cookiesSecurity"
-          v-smooth-scroll="{ duration: 1000, offset: 0 }">Cookies security</a>
+          v-smooth-scroll="{ duration: 1000, offset: -46 }">Cookies security</a>
         <a
           class="py-2 d-none d-md-inline-block"
           href="#thirdPartyContent"
-          v-smooth-scroll="{ duration: 1000, offset: 0 }">Third party content</a>
+          v-smooth-scroll="{ duration: 1000, offset: -46 }">Third party content</a>
       </div>
     </nav>
     <div class="container">
