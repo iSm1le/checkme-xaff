@@ -4,6 +4,17 @@
     <div class="d-flex flex-row text-center justify-content-sm-center">
       <div class="col-sm-12">
         <div class="results text-left py-3">
+          <div
+            class="loading-progress"
+            v-if="loadingProgress < 101">
+            <div
+              class="loading-progress-bar"
+              role="progressbar"
+              :style="`width: ${loadingProgress}%;`"
+              :aria-valuenow="`${loadingProgress}`"
+              aria-valuemin="0"
+              aria-valuemax="100"/>
+          </div>
           <div id="shortResult">
             <div class="card bg-light">
               <h1
@@ -255,6 +266,9 @@
                 <div class="card-text">
                   <div
                     v-if="resolved.cookiesSecurity">
+                    <h1
+                      class="header text-info text-center"
+                      v-if="typeof cookiesSecurity === 'string'">There are no cookies</h1>
                     <div
                       class="container mb-3"
                       v-for="(item, index) in cookiesSecurity"
@@ -346,7 +360,12 @@
                             <h5 class="header">Third party content on homepage</h5>
                             <div class="third-party-about p-4 font-weight-normal text-justify">Third party content (such as images, JavaScript, or CSS) is loaded from external resources. Despite that for some web applications it can significantly improve loading time, it may also put website visitor's privacy at risk, as information about website visitors become accessible to these third-party content providers. Moreover, third-party content delivered via the HTTP channel and not HTTPS may expose your privacy.</div>
                           </div>
-                          <div class="third-party-container">
+                          <h1
+                            class="header text-info text-center"
+                            v-if="thirdPartyContent.length === 0">There are no third party content</h1>
+                          <div
+                            class="third-party-container"
+                            v-if="thirdPartyContent.length > 0">
                             <h5 class="header">List of third party content on homepage</h5>
                             <div
                               v-for="(item, key) in thirdPartyContent"
@@ -399,6 +418,7 @@ export default {
       cookiesSecurityAttributes: [],    // Cookies security
       thirdPartyContent: null,          // Third party content
       date: null,                       // Contains current date of test
+      loadingProgress: 0,               // Loading percent on progress bar
       resolved: {
         shortResult: false,             // Short results ready to display
         webServerSecurity: false,       // Web server security section ready to display
@@ -463,23 +483,26 @@ export default {
                 this.httpHeadersSecurity = this.response.http_headers;
                 this.resolved.httpHeadersSecurity = true;
                 this.cookiesSecurity = this.response.http_cookies;
-                this.cookiesSecurity.forEach((el, i) => {
-                  this.cookiesSecurityAttributes[i] = [];
-                  Object.keys(el).forEach(key => {
-                    if (el[key].description && el[key].value) {
-                      const item = {
-                        name: key,
-                        description: `${el[key].description.split('. [')[0]}.`,
-                        type: this.getType(el[key].description),
-                        value: el[key].value === 'checkbox_TRUE' ? '✔' : el[key].value === 'checkbox_FALSE' ? '✘' : el[key].value
-                      };
-                      this.cookiesSecurityAttributes[i].push(item);
-                    }
+                if (typeof this.cookiesSecurity === 'object') {
+                  this.cookiesSecurity.forEach((el, i) => {
+                    this.cookiesSecurityAttributes[i] = [];
+                    Object.keys(el).forEach(key => {
+                      if (el[key].description && el[key].value) {
+                        const item = {
+                          name: key,
+                          description: `${el[key].description.split('. [')[0]}.`,
+                          type: this.getType(el[key].description),
+                          value: el[key].value === 'checkbox_TRUE' ? '✔' : el[key].value === 'checkbox_FALSE' ? '✘' : el[key].value
+                        };
+                        this.cookiesSecurityAttributes[i].push(item);
+                      }
+                    });
                   });
-                });
+                }
                 this.resolved.cookiesSecurity = true;
                 this.thirdPartyContent = this.response.third_party_content;
                 this.resolved.thirdPartyContent = true;
+                this.finishLoading();
                 return true;
               }
             }, 10000);
@@ -581,6 +604,19 @@ export default {
       } catch (e) {
         return false;
       }
+    },
+    /**
+     * @description Finalize loading. Without this function it just stops aroud 90%
+     * @returns {boolean}
+     */
+    finishLoading() {
+      setTimeout(() => {
+        this.loadingProgress = 99.9;
+      }, 200);
+      setTimeout(() => {
+        this.loadingProgress = 101;
+      }, 1300);
+      return true;
     }
   },
   computed: {
@@ -595,6 +631,12 @@ export default {
     }
   },
   created() {
+    const progressTimer = setInterval(() => {
+      this.loadingProgress++;
+      if (this.loadingProgress > 90) {
+        clearInterval(progressTimer);
+      }
+    }, 500);
     if (localStorage.getItem('testDate')) {
       this.date = localStorage.getItem('testDate');
     } else if (localStorage.getItem('lastUse')) {
@@ -615,6 +657,8 @@ $success-color: #28a745;
 $info-color: #17a2b8;
 $warning-color: #ffc107;
 $danger-color: #dc3545;
+$progress-bar-bg: #f8f9fa;
+$border-color: #d9dadb;
 $success-light-color: lighten(#28a745, 40%);
 $info-light-color: lighten(#17a2b8, 40%);
 $warning-light-color: lighten(#ffc107, 40%);
@@ -626,6 +670,25 @@ $danger-dark-color: darken(#dc3545, 10%);
 
 .clickable {
     cursor: pointer;
+}
+.loading-progress {
+  position: relative;
+  bottom: -1px;
+  z-index: 999;
+  border-radius: 0;
+  width: 100%;
+  height: 10px;
+  background-color: $progress-bar-bg;
+  border: 1px $border-color solid;
+  border-bottom: none;
+  max-width: 100%;
+
+  .loading-progress-bar {
+    height: 100%;
+    background-color: $info-color;
+    transition: width .7s ease-out;
+    max-width: 100%;
+  }
 }
 .card {
   .card-body {
