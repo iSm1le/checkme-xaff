@@ -431,7 +431,7 @@ export default {
   /*
   TODO:
   Notification about error on site
-  Check is site exists (will added in v0.11.0)
+  Check is site exists (will added in v0.2.0)
   */
   methods: {
     async testSite() {
@@ -455,7 +455,7 @@ export default {
               if (r1.body.job_id) {
                 jobId.append('job_id', r1.body.job_id);
               } else if (r1.body.test_id) {
-                jobId.append('job_id', r1.body.test_id);
+                jobId.append('id', r1.body.test_id);
               } else {
                 console.error(`Error! Cant get test id from api. Received response: `);
                 console.error(r1);
