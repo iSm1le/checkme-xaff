@@ -428,6 +428,11 @@ export default {
       }
     };
   },
+  /*
+  TODO:
+  Notification about error on site
+  Check is site exists (will added in v0.11.0)
+  */
   methods: {
     async testSite() {
       try {
@@ -447,7 +452,15 @@ export default {
           if (r1.status === 200) {
             const timer = await setInterval(async () => {
               const jobId = new FormData();
-              jobId.append('job_id', r1.body.job_id);
+              if (r1.body.job_id) {
+                jobId.append('job_id', r1.body.job_id);
+              } else if (r1.body.test_id) {
+                jobId.append('job_id', r1.body.test_id);
+              } else {
+                console.error(`Error! Cant get test id from api. Received response: `);
+                console.error(r1);
+                return false;
+              }
               const response = await this.$http.post(`https://www.htbridge.com/websec/api/v1/get_result/${this.date}.html`, jobId);
               if (response.status === 200) {
                 if (response.body.status_id && response.body.status_id === 2) {
